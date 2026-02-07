@@ -35,12 +35,10 @@ jobs:
 
       - name: Create Release Archive
         run: |
-          # Create a temporary folder
-          mkdir -p ./artifacts
-          # Copy the binary into the folder
-          cp target/${{ matrix.target }}/release/$BINARY_NAME ./artifacts/
-          # Create the zip/tarball from that folder
-          tar -czvf ${{ matrix.target }}.tar.gz -C ./artifacts $BINARY_NAME
+          mkdir -p release
+          # Using the exact variables from your build path
+          cp target/${{ matrix.target }}/release/${{ env.BINARY_NAME }} release/
+          tar -czvf ${{ matrix.target }}.tar.gz -C release ${{ env.BINARY_NAME }}
 
       - name: Upload Release Assets
         uses: softprops/action-gh-release@v2
