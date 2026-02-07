@@ -35,23 +35,17 @@ jobs:
 
       - name: Create Release Archive
         run: |
-          mkdir -p release
-          if [[ "${{ matrix.target }}" == *"windows"* ]]; then
-            cp target/${{ matrix.target }}/release/$BINARY_NAME.exe release/
-            zip -r ${{ matrix.target }}.zip release
-          elif [[ "${{ matrix.target }}" == *"darwin"* ]]; then
-            cp target/${{ matrix.target }}/release/$BINARY_NAME release/
-            tar -czvf ${{ matrix.target }}.tar.gz -C release $BINARY_NAME
-          else
-            cp target/${{ matrix.target }}/release/$BINARY_NAME release/
-            tar -czvf ${{ matrix.target }}.tar.gz -C release $BINARY_NAME
-          fi
+          # Create a temporary folder
+          mkdir -p ./artifacts
+          # Copy the binary into the folder
+          cp target/${{ matrix.target }}/release/$BINARY_NAME ./artifacts/
+          # Create the zip/tarball from that folder
+          tar -czvf ${{ matrix.target }}.tar.gz -C ./artifacts $BINARY_NAME
 
       - name: Upload Release Assets
         uses: softprops/action-gh-release@v2
         with:
           files: |
             *.tar.gz
-            *.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
