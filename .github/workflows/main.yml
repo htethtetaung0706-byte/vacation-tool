@@ -17,7 +17,7 @@ jobs:
           - aarch64-unknown-linux-musl      # ARM Linux (musl)
 
     env:
-      BINARY_NAME: commr
+      BINARY_NAME: vacation-tool
 
     steps:
       - name: Checkout code
