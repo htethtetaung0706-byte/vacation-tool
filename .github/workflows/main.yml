@@ -1,26 +1,22 @@
+
 name: Release Statically Linked Rust Binary
 
 on:
   push:
     tags:
-      - 'v*'
+      - 'v*'  # Trigger on tags like 'v1.0.0'
 
 jobs:
   build:
-    name: Build (${{ matrix.target }})
     runs-on: ubuntu-latest
-    # CRITICAL: Grant permission to upload release assets
-    permissions:
-      contents: write
     strategy:
-      fail-fast: false
       matrix:
         target:
-          - x86_64-unknown-linux-musl
-          - aarch64-unknown-linux-musl
+          - x86_64-unknown-linux-musl       # Linux (musl)
+          - aarch64-unknown-linux-musl      # ARM Linux (musl)
 
     env:
-      BINARY_NAME: commr
+      BINARY_NAME: vacation-tool
 
     steps:
       - name: Checkout code
@@ -30,35 +26,34 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install Cross
-        run: cargo install cross --git https://github.com/cross-rs/cross.git
+        run: cargo install cross
+
+      - name: Install Target for Cross Compilation
+        run: rustup target add ${{ matrix.target }}
 
       - name: Build with Cross
-        run: cross build --target ${{ matrix.target }} --release
+        run: cross build --target ${{ matrix.target }} --release --verbose
 
       - name: Create Release Archive
         run: |
-          # Create a temporary staging directory
-          STAGING="release_staging"
-          mkdir -p "$STAGING"
-          
-          # Path to the compiled binary
-          BIN_PATH="target/${{ matrix.target }}/release/$BINARY_NAME"
-          
-          # Check for Windows vs Unix naming
-          if [ -f "${BIN_PATH}.exe" ]; then
-            cp "${BIN_PATH}.exe" "$STAGING/"
-            cd "$STAGING" && zip "../${{ matrix.target }}.zip" *
+          mkdir -p release
+
+          if [[ "${{ matrix.target }}" == *"windows"* ]]; then
+            cp target/${{ matrix.target }}/release/$BINARY_NAME.exe release/
+            zip -r ${{ matrix.target }}.zip release
+          elif [[ "${{ matrix.target }}" == *"darwin"* ]]; then
+            cp target/${{ matrix.target }}/release/$BINARY_NAME release/
+            tar -czvf ${{ matrix.target }}.tar.gz -C release $BINARY_NAME
           else
-            cp "$BIN_PATH" "$STAGING/"
-            cd "$STAGING" && tar -czvf "../${{ matrix.target }}.tar.gz" *
+            cp target/${{ matrix.target }}/release/$BINARY_NAME release/
+            tar -czvf ${{ matrix.target }}.tar.gz -C release $BINARY_NAME
           fi
 
       - name: Upload Release Assets
         uses: softprops/action-gh-release@v2
         with:
-          # Use the built-in GITHUB_TOKEN for simplicity
           files: |
-            ${{ matrix.target }}.tar.gz
-            ${{ matrix.target }}.zip
+            *.tar.gz
+            *.zip
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.VACATION-TOOL }}
