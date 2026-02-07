@@ -1,24 +1,22 @@
-name: Build and Release
+name: Release Statically Linked Rust Binary
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
-env:
-  BINARY_NAME: vacation-tool  # Ensure this matches the 'name' in your Cargo.toml
+    tags:
+      - 'v*'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
         target:
           - x86_64-unknown-linux-musl
-          - aarch64-unknown-linux-musl  # This is the one required for the exam
-          - x86_64-pc-windows-msvc
-          - x86_64-apple-darwin
+          - aarch64-unknown-linux-musl
+
+    env:
+      BINARY_NAME: commr
 
     steps:
       - name: Checkout code
@@ -30,32 +28,21 @@ jobs:
       - name: Install Cross
         run: cargo install cross
 
-      - name: Install Target for Cross Compilation
-        run: rustup target add ${{ matrix.target }}
-
       - name: Build with Cross
         run: cross build --target ${{ matrix.target }} --release --verbose
 
       - name: Create Release Archive
         run: |
           mkdir -p release
-          if [[ "${{ matrix.target }}" == *"windows"* ]]; then
-            cp target/${{ matrix.target }}/release/$BINARY_NAME.exe release/
-            zip -r ${{ matrix.target }}.zip release
-          elif [[ "${{ matrix.target }}" == *"darwin"* ]]; then
-            cp target/${{ matrix.target }}/release/$BINARY_NAME release/
-            # Professor's fix for variable handling in tar commands
-            tar -czvf ${{ matrix.target }}.tar.gz -C release $BINARY_NAME
-          else
-            cp target/${{ matrix.target }}/release/$BINARY_NAME release/
-            # Professor's fix for variable handling in tar commands
-            tar -czvf ${{ matrix.target }}.tar.gz -C release $BINARY_NAME
-          fi
 
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+          cp target/${{ matrix.target }}/release/$BINARY_NAME release/
+
+          tar -czvf ${{ matrix.target }}.tar.gz -C release $BINARY_NAME
+
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v2
         with:
-          name: ${{ matrix.target }}
-          path: |
-            *.zip
+          files: |
             *.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
