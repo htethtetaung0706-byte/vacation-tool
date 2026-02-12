@@ -1,48 +1,35 @@
-name: Release Statically Linked Rust Binary
+name: Rust Build
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches: [ "main" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        target:
-          - x86_64-unknown-linux-musl
-          - aarch64-unknown-linux-musl
-
-    env:
-      BINARY_NAME: remindr (your project name)
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+        run: rustup update stable
 
       - name: Install Cross
-        run: cargo install cross
+        run: cargo install cross --git https://github.com/cross-rs/cross.git
 
       - name: Install Target
-        run: rustup target add ${{ matrix.target }}
+        run: rustup target add x86_64-unknown-linux-musl
 
       - name: Build with Cross
-        run: cross build --target ${{ matrix.target }} --release
+        run: cross build --release --target x86_64-unknown-linux-musl
 
       - name: Create Release Archive
         run: |
           mkdir -p release
-          cp target/${{ matrix.target }}/release/$BINARY_NAME release/
-          tar -czvf ${{ matrix.target }}.tar.gz -C release $BINARY_NAME
+          cp target/x86_64-unknown-linux-musl/release/vacation-tool release/
 
       - name: Upload Release Assets
-        uses: softprops/action-gh-release@v2
+        uses: actions/upload-artifact@v4
         with:
-          files: |
-            *.tar.gz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: vacation-tool-bin
+          path: release/
+
