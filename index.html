@@ -2,25 +2,58 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>VacationTool - Stress-Free Planning</title>
+    <title>Vacation Tool | Never Forget a Trip Detail</title>
     <style>
-        body { font-family: sans-serif; line-height: 1.6; max-width: 600px; margin: 40px auto; padding: 20px; }
-        .button { background: #2ecc71; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 40px; text-align: center; }
+        header { background: #f4f4f9; padding: 40px; border-radius: 15px; margin-bottom: 30px; }
+        h1 { color: #2c3e50; margin-bottom: 10px; }
+        .tagline { font-size: 1.2em; color: #7f8c8d; }
+        .features { display: flex; justify-content: space-around; margin: 40px 0; text-align: left; }
+        .feature-item { flex: 1; padding: 10px; }
+        .button { background: #27ae60; color: white; padding: 18px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 1.1em; display: inline-block; transition: background 0.3s; }
+        .button:hover { background: #219150; }
+        code { background: #eee; padding: 2px 5px; border-radius: 4px; }
     </style>
 </head>
 <body>
-    <h1>Don't Forget the Sunscreen! ☀️</h1>
-    <p><b>VacationTool</b> is a CLI designed for travelers who live in the terminal. Quickly log items to pack or chores to do before you leave.</p>
-    
-    <h3>Marketing & Growth</h3>
-    <p>We attract users by sharing "Ultimate Packing Checklists" on travel blogs and Reddit. Our tool is the fastest way to implement those lists.</p>
-    
-    <h3>Monetization</h3>
-    <ul>
-        <li><b>Basic:</b> Free for personal use.</li>
-        <li><b>Pro:</b> $2.99 for Cloud Sync (Coming Soon).</li>
-    </ul>
 
-    <a class="button" href="#">Download for Linux/Mac</a>
+    <header>
+        <h1>Vacation Tool 🏖️</h1>
+        <p class="tagline">Because forgetting your passport shouldn't be part of the itinerary.</p>
+    </header>
+
+    <section>
+        <h2>The Problem: Travel Amnesia</h2>
+        <p>Packing for a trip is stressful. Between flights, hotels, and gear, it’s easy to leave something vital behind. <strong>Vacation Tool</strong> is a lightweight command-line utility designed for travelers who need a reliable, no-nonsense reminder system.</p>
+    </section>
+
+    <div class="features">
+        <div class="feature-item">
+            <h3>✅ Smart Reminders</h3>
+            <p>Automated alerts for your specific trip needs, from documents to chargers.</p>
+        </div>
+        <div class="feature-item">
+            <h3>⚡ CLI Speed</h3>
+            <p>Built in Rust for blazing-fast performance. Manage your trip right from your terminal.</p>
+        </div>
+        <div class="feature-item">
+            <h3>🐧 Linux Native</h3>
+            <p>Statically linked for Linux systems (x86_64 & aarch64).</p>
+        </div>
+    </div>
+
+    <section>
+        <h2>Get Started</h2>
+        <p>Download the latest binary and run <code>./vacation-tool --help</code> to start your stress-free journey.</p>
+        <br>
+        <a href="https://github.com/htethtetaung0706-byte/vacation-tool/releases" class="button">Download for Linux (v0.1.0)</a>
+    </section>
+
+    <footer style="margin-top: 50px; color: #bdc3c7; font-size: 0.8em;">
+        <p>Created for the 24W-GBAC Exam Requirement</p>
+    </footer>
+
 </body>
 </html>
+
+
